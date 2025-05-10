@@ -16,7 +16,7 @@ namespace EventBooking.Controllers
         public AuthController(IAuthService authService)
         {
             _authService = authService;
-            _response = new();
+            this._response = new();
         }
 
         [HttpPost("register")]
@@ -42,7 +42,7 @@ namespace EventBooking.Controllers
                     return BadRequest(_response);
                 }
                 _response.StatusCode = HttpStatusCode.OK;
-                _response.result = result;
+                _response.Result = result;
                 return Ok(_response);
             }
             catch (Exception ex)
@@ -75,7 +75,7 @@ namespace EventBooking.Controllers
                     return BadRequest(_response);
                 }
                 _response.StatusCode = HttpStatusCode.OK;
-                _response.result = new { result.Token, result.ExpiresOn };
+                _response.Result = new { result.Token, result.ExpiresOn };
                 return Ok(_response);
             }
             catch(Exception ex)

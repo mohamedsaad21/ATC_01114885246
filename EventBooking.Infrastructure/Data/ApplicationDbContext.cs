@@ -10,5 +10,15 @@ namespace EventBooking.Infrastructure.Data
         {
 
         }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Event> Events { get; set; }
+        public DbSet<UsersEvents> UsersEvents { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.Entity<UsersEvents>()
+                .HasKey(ue => new { ue.ApplicationUserId, ue.EventId });
+        }
     }
 }

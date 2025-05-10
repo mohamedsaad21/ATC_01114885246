@@ -24,10 +24,14 @@ namespace EventBooking.Infrastructure.Repository
             return await query.ToListAsync();
         }
 
-        public async Task<T> GetAsync(Expression<Func<T, bool>> filter)
+        public async Task<T> GetAsync(Expression<Func<T, bool>> filter, bool tracked = true)
         {
             IQueryable<T> query = dbSet;
             query = query.Where(filter);
+            if (!tracked)
+            {
+                query = query.AsNoTracking();
+            }
             return await query.FirstOrDefaultAsync();
         }
         public async Task CreateAsync(T entity)
@@ -39,7 +43,7 @@ namespace EventBooking.Infrastructure.Repository
             dbSet.Update(entity);
         }
 
-        public async Task DeleteAsync(T entity)
+        public async Task RemoveAsync(T entity)
         {
             dbSet.Remove(entity);
         }
