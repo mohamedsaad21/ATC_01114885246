@@ -20,86 +20,87 @@ builder.Services.AddControllers(options =>
     {
         Duration = 30
     });
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle  
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
-
-builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(o => // Corrected from AddBearerToken to AddJwtBearer  
-{
-    o.RequireHttpsMetadata = false;
-    o.SaveToken = false;
-    o.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["JWT:Issuer"],
-        ValidAudience = builder.Configuration["JWT:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"]!))
-    };
 });
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddResponseCaching();
-var app = builder.Build();
+    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle  
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
 
-// Configure the HTTP request pipeline.  
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-app.UseHttpsRedirection();
+    builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 
-app.UseAuthentication();
-app.UseAuthorization();
+    builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
 
-app.MapControllers();
-
-using (var scope = app.Services.CreateScope())
-{
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    var roles = new[] { Roles.Role_Admin, Roles.Role_User };
-
-    foreach (var role in roles)
+    builder.Services.AddAuthentication(options =>
     {
-        if (!await roleManager.RoleExistsAsync(role))
-            await roleManager.CreateAsync(new IdentityRole(role));
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    }).AddJwtBearer(o => // Corrected from AddBearerToken to AddJwtBearer  
+    {
+        o.RequireHttpsMetadata = false;
+        o.SaveToken = false;
+        o.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["JWT:Issuer"],
+            ValidAudience = builder.Configuration["JWT:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"]!))
+        };
+    });
+    builder.Services.AddScoped<IAuthService, AuthService>();
+    builder.Services.AddResponseCaching();
+    var app = builder.Build();
+
+    // Configure the HTTP request pipeline.  
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
     }
-}
 
-using (var scope = app.Services.CreateScope())
-{
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    app.UseHttpsRedirection();
 
-    var FirstName = "Mohamed";
-    var LastName = "Saad";
-    var Username = "msaad";
-    var Email = "mohamedsaad2756@gmail.com";
-    var password = "Ad@123";
+    app.UseAuthentication();
+    app.UseAuthorization();
 
-    var user = new ApplicationUser
+    app.MapControllers();
+
+    using (var scope = app.Services.CreateScope())
     {
-        FirstName = FirstName,
-        LastName = LastName,
-        UserName = Username,
-        Email = Email,
-    };
-    await userManager.CreateAsync(user, password);
-    await userManager.AddToRoleAsync(user, Roles.Role_Admin);
-}
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        var roles = new[] { Roles.Role_Admin, Roles.Role_User };
 
-app.Run();
+        foreach (var role in roles)
+        {
+            if (!await roleManager.RoleExistsAsync(role))
+                await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
+
+    using (var scope = app.Services.CreateScope())
+    {
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+        var FirstName = "Mohamed";
+        var LastName = "Saad";
+        var Username = "msaad";
+        var Email = "mohamedsaad2756@gmail.com";
+        var password = "Ad@123";
+
+        var user = new ApplicationUser
+        {
+            FirstName = FirstName,
+            LastName = LastName,
+            UserName = Username,
+            Email = Email,
+        };
+        await userManager.CreateAsync(user, password);
+        await userManager.AddToRoleAsync(user, Roles.Role_Admin);
+    }
+
+    app.Run();
 
 
