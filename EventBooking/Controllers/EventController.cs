@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using EventBooking.Core.Entities;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 namespace EventBooking.Controllers
 {
     [Route("api/[controller]")]
@@ -15,22 +16,24 @@ namespace EventBooking.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         protected APIResponse _response;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public EventController(IUnitOfWork unitOfWork, IMapper mapper)
+        public EventController(IUnitOfWork unitOfWork, IMapper mapper, IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _webHostEnvironment = webHostEnvironment;
             this._response = new();
         }
 
         [HttpGet]
         [ResponseCache(CacheProfileName = "Default30")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<APIResponse>> GetEvents()
+        public async Task<ActionResult<APIResponse>> GetEvents(int pageSize = 3, int pageNumber = 1)
         {
             try
             {
-                _response.Result = _mapper.Map<IEnumerable<EventDTO>>(await _unitOfWork.Event.GetAllAsync());
+                _response.Result = _mapper.Map<IEnumerable<EventDTO>>(await _unitOfWork.Event.GetAllAsync(includeProperties: "Category", pageSize:pageSize, pageNumber:pageNumber));
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
 
@@ -58,7 +61,7 @@ namespace EventBooking.Controllers
                     _response.IsSuccess = false;
                     return BadRequest(_response);
                 }
-                var Event = await _unitOfWork.Event.GetAsync(u => u.Id == id, false);
+                var Event = await _unitOfWork.Event.GetAsync(u => u.Id == id, false, includeProperties:"Category");
                 if (Event == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
@@ -85,11 +88,22 @@ namespace EventBooking.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<ActionResult<APIResponse>> CreateEvent([FromBody] EventCreateDTO eventDTO)
+        public async Task<ActionResult<APIResponse>> CreateEvent([FromBody] EventCreateDTO eventDTO, IFormFile? file)
         {
             try
             {
-                var Event = _mapper.Map<Event>(eventDTO);                
+                var Event = _mapper.Map<Event>(eventDTO);       
+                var wwwRootPath = _webHostEnvironment.ContentRootPath;
+                if (file != null)
+                {
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    var eventPath = Path.Combine(wwwRootPath, @"images\events");
+                    using(var fileStream = new FileStream(Path.Combine(eventPath, fileName), FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
+                    Event.ImageUrl = @"\images\events\" + fileName;
+                }
                 await _unitOfWork.Event.CreateAsync(Event);
                 await _unitOfWork.SaveAsync();
 
@@ -147,7 +161,7 @@ namespace EventBooking.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<ActionResult<APIResponse>> UpdateEvent(int id, [FromBody] EventUpdateDTO eventDTO)
+        public async Task<ActionResult<APIResponse>> UpdateEvent(int id, [FromBody] EventUpdateDTO eventDTO, IFormFile? file)
         {
             try
             {
@@ -163,6 +177,17 @@ namespace EventBooking.Controllers
                     _response.StatusCode = HttpStatusCode.NotFound;
                     _response.IsSuccess = false;
                     return NotFound(_response);
+                }
+                var wwwRootPath = _webHostEnvironment.ContentRootPath;
+                if (file != null)
+                {
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    var eventPath = Path.Combine(wwwRootPath, @"images\events");
+                    using (var fileStream = new FileStream(Path.Combine(eventPath, fileName), FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
+                    Event.ImageUrl = @"\images\events\" + fileName;
                 }
                 Event = _mapper.Map<Event>(eventDTO);
 
