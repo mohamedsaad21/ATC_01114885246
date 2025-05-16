@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="charset" content="UTF-8" />
+    <title>Event Booking System</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Navbar</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarColor01">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">
+                            Home
+                            <span class="visually-hidden">(current)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="bookings.html">My Bookings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Pricing</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
+                    <li class="nav-item"><a class="nav-link" href="register.html">Register</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="row p-3 shadow rounded">
+        <div class="col-md-12">
+            <form id="registerForm" method="post">
+                <div class="text-center bg-primary bg-gradient text-white p-3">
+                    <h2>Register</h2>
+                </div>
+                <h2 class="text-center p-2">Create a new account.</h2>
+                <hr />
+                <div class="row">
+                    <div id="message" class="text-danger" role="alert"></div>
+                    <div class="form-floating mb-3 col-md-6">
+                        <input class="form-control" type="text" name="FirstName" id="firstname" />
+                        <label class="ms-2">First Name</label>
+                        <span class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-3 col-md-6">
+                        <input class="form-control" type="text" name="LastName" id="lastname" />
+                        <label class="ms-2">Last Name</label>
+                        <span class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-3 col-md-6">
+                        <input class="form-control" type="text" name="Username" id="username" />
+                        <label class="ms-2">Username</label>
+                        <span class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-3 col-md-6">
+                        <input class="form-control" type="email" name="Email" id="email" />
+                        <label class="ms-2">Email</label>
+                        <span class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-3 col-md-6">
+                        <input class="form-control" type="password" name="Password" id="password" />
+                        <label class="ms-2">Password</label>
+                        <span class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-3 col-md-6">
+                        <input class="form-control" type="password" name="Password" id="confirmpassword" />
+                        <label class="ms-2">Confirm Password</label>
+                        <span class="text-danger"></span>
+                    </div>
+                </div>
+                <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="register.js"></script>
+</body>
+</html>

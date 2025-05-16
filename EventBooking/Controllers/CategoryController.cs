@@ -77,7 +77,8 @@ namespace ECommerce_API.Controllers
             return _response;
         }
         [HttpPost]
-        [Authorize(Roles = Roles.Role_Admin)]
+        //[Authorize(Roles = Roles.Role_Admin)]
+        
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

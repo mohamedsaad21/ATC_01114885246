@@ -4,6 +4,7 @@ using EventBooking.Application.Services.IService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 
 namespace EventBooking.Controllers
@@ -27,7 +28,7 @@ namespace EventBooking.Controllers
         {
             try
             {
-                var UserId = User.FindFirst("uid")?.Value!;
+                string UserId = User.FindFirst("uid")?.Value!;
                 var bookings = await _bookingService.GetBookingsAsync(UserId);
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.Result = bookings;

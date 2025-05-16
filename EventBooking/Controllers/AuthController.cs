@@ -75,7 +75,7 @@ namespace EventBooking.Controllers
                     return BadRequest(_response);
                 }
                 _response.StatusCode = HttpStatusCode.OK;
-                _response.Result = new { result.Token, result.ExpiresOn };
+                _response.Result = result;
                 return Ok(_response);
             }
             catch(Exception ex)
