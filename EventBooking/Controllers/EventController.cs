@@ -82,18 +82,18 @@ namespace EventBooking.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = Roles.Role_Admin)]
+        //[Authorize(Roles = Roles.Role_Admin)]
         [ServiceFilter(typeof(EventValidateAttribute))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<ActionResult<APIResponse>> CreateEvent([FromBody] EventCreateDTO eventDTO, IFormFile? file)
+        public async Task<ActionResult<APIResponse>> CreateEvent([FromForm] EventCreateDTO eventDTO, IFormFile? file)
         {
             try
             {
                 var Event = _mapper.Map<Event>(eventDTO);       
-                var wwwRootPath = _webHostEnvironment.ContentRootPath;
+                var wwwRootPath = _webHostEnvironment.WebRootPath;
                 if (file != null)
                 {
                     var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
@@ -161,7 +161,7 @@ namespace EventBooking.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<ActionResult<APIResponse>> UpdateEvent(int id, [FromBody] EventUpdateDTO eventDTO, IFormFile? file)
+        public async Task<ActionResult<APIResponse>> UpdateEvent(int id, [FromForm] EventUpdateDTO eventDTO, IFormFile? file)
         {
             try
             {
@@ -178,7 +178,7 @@ namespace EventBooking.Controllers
                     _response.IsSuccess = false;
                     return NotFound(_response);
                 }
-                var wwwRootPath = _webHostEnvironment.ContentRootPath;
+                var wwwRootPath = _webHostEnvironment.WebRootPath;
                 if (file != null)
                 {
                     var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);

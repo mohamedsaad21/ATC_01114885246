@@ -11,7 +11,6 @@ namespace EventBooking.Application.Dtos.Event
         public DateTimeOffset Date { get; set; }
         public string Venue { get; set; }
         public decimal Price { get; set; }
-        public string? ImageUrl { get; set; }
         public int CategoryId { get; set; }
     }
 }

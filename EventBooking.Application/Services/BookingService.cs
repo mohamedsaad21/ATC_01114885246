@@ -7,7 +7,7 @@ using EventBooking.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 namespace EventBooking.Application.Services
 {
-    internal class BookingService : IBookingService
+    public class BookingService : IBookingService
     {
         private readonly ApplicationDbContext _db;
         private readonly IMapper _mapper;

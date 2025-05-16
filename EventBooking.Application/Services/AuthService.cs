@@ -60,6 +60,7 @@ namespace EventBooking.Application.Services
                 Email = user.Email,
                 Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
                 ExpiresOn = jwtSecurityToken.ValidTo,
+                ApplicationUserId = user.Id,
             };
         }
 
@@ -77,6 +78,7 @@ namespace EventBooking.Application.Services
                 Email = model.Email,
                 Token = new JwtSecurityTokenHandler().WriteToken(await createjwtToken(user)),
                 ExpiresOn = DateTime.UtcNow.AddDays(_jwt.DurationInDays),
+                ApplicationUserId = user.Id
             };
         }
 
